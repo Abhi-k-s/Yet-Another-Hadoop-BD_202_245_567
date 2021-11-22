@@ -3,6 +3,7 @@ import os
 from shutil import rmtree
 
 f = open("config_sample.json")
+
 data = json.load(f)
 
 BLOCK_SIZE = 64
