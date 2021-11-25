@@ -36,7 +36,7 @@ def namenodereceiveheartbeat1():
 			set1 = set()
 		else:
 			faultydatanodes = masterset - set1
-			print("404, Some datanodes didn't send heartbeat", faultydatanodes, datetime.datetime.fromtimestamp(time.time()))
+			print("404, Some datanodes didn't send heartbeat", faultydatanodes)
 			set1 = set()
 			#should write code to remove the datanode from the metadata file
 			#todo
