@@ -1,14 +1,23 @@
 import threading
 from threading import Thread
 from multiprocessing import Process
-from datanode1 import datanode1HB1
-from datanode2 import datanode2HB2	
 from namenoderecieveheartbeat import namenodereceiveheartbeat1
 
-thread1 = threading.Thread(target=datanode1HB1, name='Thread-1')
-thread2 = threading.Thread(target=datanode2HB2, name='Thread-2')
-thread3 = threading.Thread(target=namenodereceiveheartbeat1, name='Thread-3')
+BLOCK_SIZE = 64
+REPLICATION_FACTOR = 3
+NUM_DATANODES = 5
+DATANODE_SIZE = 10
+SYNC_PERIOD = 180
 
-thread3.start()
-thread1.start()
-thread2.start()
+dsthreads = {}
+
+for i in range(1, NUM_DATANODES + 1):
+    exec("from DATANODE.datanode{}.datanode{} import datanode{}HB".format(i, i, i))
+    exec("dsthreads['datanodehbthread{}'] = threading.Thread(target = datanode{}HB, name = 'DatanodeHBThread{}')".format(i, i, i))
+
+
+namenodeHBthread = threading.Thread(target=namenodereceiveheartbeat1, name='namenodeHBthread')
+namenodeHBthread.start()
+
+for i in range(1, NUM_DATANODES + 1):
+    dsthreads['datanodehbthread{}'.format(i)].start()
