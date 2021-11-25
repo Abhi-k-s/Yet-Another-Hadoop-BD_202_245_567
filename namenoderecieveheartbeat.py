@@ -21,7 +21,7 @@ def namenodereceiveheartbeat1():
 	bytesToSend = str.encode(msgFromServer)
 	UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	UDPServerSocket.bind((localIP, localPort))
-	print("UDP server up and listening")
+	print("NAMENODE server up and listening")
 
 	set1 = set()
 
