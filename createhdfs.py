@@ -55,12 +55,12 @@ def datanode{}HB():
     while True:
         UDPClientSocket.sendto(bytesToSend, serverAddressPort)'''
 
-namenodestring = '''import socket
+namenodestring = f'''import socket
 import time
 import datetime
 import json
 
-f = open("/Users/vinaynaidu/DFS/setup.json")
+f = open("{dfs_setup_config}")
 config = json.load(f)
 block_size = config['block_size']
 path_to_datanodes = config['path_to_datanodes']
@@ -128,3 +128,5 @@ for i in range(1, num_datanodes + 1):
         filename = 'DATANODE/datanode{}/block{}.txt'.format(i, j)
         filename = dirname + 'block{}.txt'.format(j)
         open(filename, 'w').close()
+
+
