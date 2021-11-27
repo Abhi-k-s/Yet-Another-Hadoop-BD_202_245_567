@@ -55,12 +55,14 @@ def datanode{}HB():
     while True:
         UDPClientSocket.sendto(bytesToSend, serverAddressPort)'''
 
-namenodestring = f'''import socket
+
+namenodestring = '''import socket
 import time
 import datetime
 import json
+import os
 
-f = open("{dfs_setup_config}")
+f = open("/Users/vinaynaidu/DFS/setup.json")
 config = json.load(f)
 block_size = config['block_size']
 path_to_datanodes = config['path_to_datanodes']
@@ -75,11 +77,16 @@ namenode_checkpoints = config['namenode_checkpoints']
 fs_path = config['fs_path']
 dfs_setup_config = config['dfs_setup_config']
 
+namenodelogs = open(namenode_log_path, 'a')
+datanodelogs = open(datanode_log_path, 'a')
+
 HEARBEAT_TIMEPERIOD = 5.0
 
 masterset = set(range(1, num_datanodes + 1))
 
 def namenodereceiveheartbeat1():
+	namenodelogs = open(namenode_log_path, 'a')
+	datanodelogs = open(datanode_log_path, 'a')
 	localIP = "127.0.0.1"
 	localPort = 2000
 	bufferSize = 1024
@@ -99,15 +106,26 @@ def namenodereceiveheartbeat1():
 			message = int(bytesAddressPair[0].decode())
 			set1.add(int(message))
 		if len(set1) == num_datanodes:
-			print("200, All datanodes functioning", datetime.datetime.fromtimestamp(time.time()))
+			# print("200, All datanodes functioning", datetime.datetime.fromtimestamp(time.time()))
+			# datanodelogs.write("200, All datanodes functioning at {}".format(datetime.datetime.fromtimestamp(time.time())))
+			datanodelogs.write("200, All datanodes functioning at - ")
+			datanodelogs.write(str(datetime.datetime.fromtimestamp(time.time())) + '\\n')
+			datanodelogs.flush()
+			# os.fsync(datanodelogs.fileno())
 			set1 = set()
 		else:
 			faultydatanodes = masterset - set1
-			print("404, Some datanodes didn't send heartbeat", faultydatanodes)
+			# print("404, Some datanodes didn't send heartbeat", faultydatanodes)
+			datanodelogs.write("404, Some datanodes didn't send heartbeat - ")
+			datanodelogs.write(str(faultydatanodes) + '\\n')
+			datanodelogs.flush()
 			set1 = set()
 			#should write code to remove the datanode from the metadata file
-			#todo'''
-			
+			#todo
+'''
+
+
+
 try:
     os.mkdir(path_to_namenodes)
 except:
@@ -128,5 +146,3 @@ for i in range(1, num_datanodes + 1):
         filename = 'DATANODE/datanode{}/block{}.txt'.format(i, j)
         filename = dirname + 'block{}.txt'.format(j)
         open(filename, 'w').close()
-
-

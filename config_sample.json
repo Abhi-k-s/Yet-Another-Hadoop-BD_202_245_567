@@ -6,8 +6,8 @@
     "num_datanodes": 5,
     "datanode_size": 10,
     "sync_period": 180,
-    "datanode_log_path": "/users/vinaynaidu/DATANODE/DATANODE_LOGS/",
-    "namenode_log_path": "/users/vinaynaidu/NAMENODE/NAMENODE_LOG.txt",
+    "datanode_log_path": "/users/vinaynaidu/DATANODE/DATANODE_LOGS.txt",
+    "namenode_log_path": "/users/vinaynaidu/NAMENODE/NAMENODE_LOGS.txt",
     "namenode_checkpoints": "/users/vinaynaidu/NAMENODE/CHECKPOINTS/",
     "fs_path": "/users/vinaynaidu/DFS/FILE_SYSTEM/",
     "dfs_setup_config": "/users/vinaynaidu/DFS/setup.json"
