@@ -6,6 +6,7 @@ import json
 import sys
 from functions import split
 from functions import cat
+from functions import remove
 from mapreduce import mapreduce
 
 
@@ -83,6 +84,14 @@ while True:
                 print(e)
         else:
             print("Invalid syntax for cat command")
+    if command[0] == "rm":
+        if len(command) == 2:
+            try:
+                remove(command[1])
+            except error as e:
+                print(e)
+        else:
+            print("Invalid syntax for rm command")
     if command[0] == "runmapreducejob":
         if len(command) == 11:
             inputfilepath = command[2]

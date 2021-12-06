@@ -140,3 +140,55 @@ def cat(fileName):
 			print(line.strip())
 
 		file1.close()
+
+def remove(fileName):
+	metaDataOfDatanodespath = path_to_namenodes + 'metaDataofDatanodes.json'
+	metaDataOfInputFilespath = path_to_namenodes + 'metaDataofInputFiles.json'
+	f=open(metaDataOfInputFilespath)
+	f3=open(metaDataOfDatanodespath)
+	data=json.load(f)  #metadata of files
+	metadataOfDatanodes=json.load(f3)  #metadata of datanodes
+
+	f.close()
+	f3.close()
+
+	fileSplits=[]
+	try:
+		for i in range(1,data[fileName][0]+1):
+			fileSplits.append(path_to_datanodes + data[fileName][i][2]+'/'+data[fileName][i][1]+'.'+fileName.split('.')[1]) #relativepaths of splits
+
+	except:
+		print("File does not exist") 
+
+
+	i=1 #to keep track of splits in data{}
+	for splits in fileSplits:
+		freeDatanode= data[fileName][i][2]     #block from this datanode this removed
+		freeBlockNumber=data[fileName][i][3]    #freed block
+		#print(freeDatanode,freeBlockNumber)
+		
+		os.remove(splits)
+		i=i+1
+		#update datanodemetafile since splits got deleted the blocks of datnode has become free
+		metadataOfDatanodes[freeDatanode]["occupiedBlocks"].pop(str(freeBlockNumber))
+		metadataOfDatanodes[freeDatanode]["freeBlocks"].insert(0,int(freeBlockNumber))
+		
+		
+		# #placing a new free block
+		# #f5=open(path_to_datanodes + "datanode{}".format(freeDatanode)+"/"+"block{}".format(str(freeBlockNumber))+".txt",'w')
+		# print("jbjheb")
+		# #f5.close()
+		
+		
+	#updating the file meta data
+	try:
+		data.pop(fileName) #file doesnt exits anymore so remove it off from the fileMetadata
+		f2=open(metaDataOfInputFilespath,'w')
+		f2.write(str(json.dumps(data, indent=4)))
+	except:
+		pass
+		
+	#updating datanode metadata
+	f4=open(metaDataOfDatanodespath,'w')
+	f4.write(str(json.dumps(metadataOfDatanodes, indent=4)))
+	print("Remove file successful")
