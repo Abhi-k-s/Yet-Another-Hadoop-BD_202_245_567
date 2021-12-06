@@ -159,6 +159,8 @@ import time
 import datetime
 import json
 import os
+import threading
+from namenode import namenodereceiveheartbeat1
 
 f = open("/Users/vinaynaidu/DFS/setup.json")
 config = json.load(f)
@@ -237,7 +239,10 @@ def secnamenodereceiveheartbeat():
                     namenodelogs.write("404, Primary Namenode didn't send heartbeat - " + str(datetime.datetime.fromtimestamp(time.time())))
                     namenodelogs.flush()
                     if count > 5:
-                        #should take over primary namenode
+                        #primary namenode is not functioning
+                        #start new primary namenode
+                        namenodeHBthread = threading.Thread(target=namenodereceiveheartbeat1, name='newnamenodeHBthread')
+                        namenodeHBthread.start()
                         pass
             else:
                 prevstart = start'''

@@ -6,7 +6,7 @@ import json
 import sys
 from functions import split
 from functions import cat
-
+from mapreduce import mapreduce
 
 
 #change path to this file accordingly
@@ -56,7 +56,8 @@ cat, syntax - cat <filename>
 ls, syntax - ls
 rm,
 mkdir,
-rmdir,'''
+rmdir,
+runmapreducejob -i <absolute path of input file> -o <absolute path of output> -c <dfs setup file> -m <mapper absolute path> -r <reducer absolute path>'''
 
 while True:
     print()
@@ -65,16 +66,31 @@ while True:
     print()
     command  = input().split()
     if command[0] == "put":
-        try:
-            # print('Command', command[0])
-            # print('File', command[1])
-            message = split(command[1])
-            print(message)
-            print()
-        except error as e:
-            print(e)
+        if len(command) == 2:
+            try:
+                message = split(command[1])
+                print(message)
+                print()
+            except error as e:
+                print(e)
+        else:
+            print("Invalid syntax for put command")
     if command[0] == "cat":
-        try:
-            cat(command[1])
-        except error as e:
-            print(e)
+        if len(command) == 2:
+            try:
+                cat(command[1])
+            except error as e:
+                print(e)
+        else:
+            print("Invalid syntax for cat command")
+    if command[0] == "runmapreducejob":
+        if len(command) == 11:
+            inputfilepath = command[2]
+            outputfilepath = command[4]
+            setupfilepath = command[6]
+            mapperpath = command[8]
+            reducerpath = command[10]
+            mapreduce(inputfilepath, outputfilepath, setupfilepath, mapperpath, reducerpath)
+        else:
+            print("Invalid syntax for running Map Reduce job")
+

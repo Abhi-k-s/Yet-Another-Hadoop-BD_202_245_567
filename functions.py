@@ -3,18 +3,6 @@ import json
 import os
 import glob
 
-#default configuration
-# block_size = 64
-# path_to_datanodes = "/users/vinaynaidu/DATANODE/"
-# path_to_namenodes = "/users/vinaynaidu/NAMENODE/"
-# replication_factor = 3
-# num_datanodes = 5
-# datanode_size = 10
-# sync_period = 60
-# datanode_log_path = "/users/vinaynaidu/DATANODE/DATANODE_LOGS.txt"
-# namenode_log_path = "/users/vinaynaidu/NAMENODE/NAMENODE_LOGS.txt"
-# namenode_checkpoints = "/users/vinaynaidu/NAMENODE/CHECKPOINTS/"
-# fs_path = "/users/vinaynaidu/DFS/FILE_SYSTEM/"
 dfs_setup_config = "/users/vinaynaidu/DFS/setup.json"
 setupfiledir = "/users/vinaynaidu/DFS/"
 
@@ -91,8 +79,7 @@ def fileUpload(input):
 	f1.close()
 	f2.close()
 	return message
-	#print(metaDataOfDatanodes)
-	#print(metaDataOfInputFiles)
+
 
 def split(filePath):
     input=[]  #this is sent as input for nn.py
@@ -101,8 +88,6 @@ def split(filePath):
     except:
         pass
     os.mkdir('temp')
-
-    #filePath="./US_ACCIDENT_DATA_5PERCENT.json"   #path of the file to be uploaded to hdfs
 
     fileName=filePath.split('/')[-1]
 
@@ -118,7 +103,7 @@ def split(filePath):
     #print(fileName)
     i=1
     for file in files:
-        newFilePath='./temp/'+fileName.split('.')[0]+'${}'.format(i)+'.'+fileName.split('.')[1]
+        newFilePath='./temp/'+fileName.split('.')[0]+'*{}'.format(i)+'.'+fileName.split('.')[1]
         os.rename(file, newFilePath)  #extension of file needed so last split() 
         splitPath=newFilePath
         i+=1
@@ -138,7 +123,7 @@ def cat(fileName):
 	f = open(metaDataOfInputFilespath)
 	data=json.load(f)
 	#print(data)
-	#fileSplits=["./datanode1/hello.txt","./datanode2/hello2.txt"] #split's paths orderwise  this is how fileSplits looks like
+	#fileSplits=["./datanode1/hello.txt","./datanode2/hello2.txt"] #split's paths orderwise  this is how fileSplits look like
 
 	fileSplits=[]
 	try:
