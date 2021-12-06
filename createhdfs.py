@@ -2,12 +2,6 @@ import json
 import os
 from shutil import rmtree
 
-BLOCK_SIZE = 64
-REPLICATION_FACTOR = 3
-NUM_DATANODES = 5
-DATANODE_SIZE = 10
-SYNC_PERIOD = 180
-
 f = open("config_sample.json")
 config = json.load(f)
 block_size = config['block_size']
@@ -47,13 +41,14 @@ datanodestring = '''import socket
 import time
 
 def datanode{}HB():
-    msgFromClient = "{}"
-    bytesToSend = str.encode(msgFromClient)
-    serverAddressPort = ("127.0.0.1", 2000)
-    bufferSize = 1024
-    UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-    while True:
-        UDPClientSocket.sendto(bytesToSend, serverAddressPort)'''
+	msgFromClient = "{}"
+	bytesToSend = str.encode(msgFromClient)
+	serverAddressPort = ("127.0.0.1", 2000)
+	bufferSize = 1024
+	UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+	while True:
+		UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+		time.sleep({})'''
 
 
 namenodestring = '''import socket
@@ -95,13 +90,13 @@ def namenodereceiveheartbeat1():
 	bytesToSend = str.encode(msgFromServer)
 	UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	UDPServerSocket.bind((localIP, localPort))
-	print("NAMENODE server up and listening")
+	# print("NAMENODE server up and listening")
 
 	set1 = set()
 
 	while(True):
 		start = time.time()
-		while(time.time() < start + HEARBEAT_TIMEPERIOD):
+		while(time.time() < start + sync_period):
 			bytesAddressPair = UDPServerSocket.recvfrom(bufferSize)
 			message = int(bytesAddressPair[0].decode())
 			set1.add(int(message))
@@ -140,9 +135,21 @@ for i in range(1, num_datanodes + 1):
     filename = path_to_datanodes + 'datanode{}'.format(i) + '/datanode{}.py'.format(i)
     open(filename, 'w').close()
     filehandle = open(filename,"w")
-    filehandle.write(datanodestring.format(i, i))
+    filehandle.write(datanodestring.format(i, i, sync_period/3))
     filehandle.close()
-    for j in range(1, datanode_size + 1):
-        filename = 'DATANODE/datanode{}/block{}.txt'.format(i, j)
-        filename = dirname + 'block{}.txt'.format(j)
-        open(filename, 'w').close()
+    # for j in range(1, datanode_size + 1):
+    #     filename = 'DATANODE/datanode{}/block{}.txt'.format(i, j)
+    #     filename = dirname + 'block{}.txt'.format(j)
+    #     open(filename, 'w').close()
+
+metaDataOfDatanodes={}  #keeps of track of datanodes and availability basically needed for writing file to hdfs
+metaDataOfInputFiles={}  #keeps track of files uploaded needed for reading from hdfs for cat command
+for i in range(1, num_datanodes+1):
+	metaDataOfDatanodes["datanode{}".format(i)] = {"freeBlocks":list(range(1, datanode_size + 1)),"occupiedBlocks":{}}
+
+metaDataOfDatanodespath = path_to_namenodes + 'metaDataofDatanodes.json'
+metaDataOfInputFilespath = path_to_namenodes + 'metaDataofInputFiles.json'
+handle1 = open(metaDataOfDatanodespath, 'w')
+handle1.write(str(json.dumps(metaDataOfDatanodes, indent=4)))
+handle2 = open(metaDataOfInputFilespath, 'w')
+handle2.write(str(json.dumps(metaDataOfInputFiles, indent=4)))

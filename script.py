@@ -1,8 +1,10 @@
+from os import error
 import threading
 from threading import Thread
 from multiprocessing import Process
 import json
 import sys
+from split import split
 
 #change path to this file accordingly
 f = open("/Users/vinaynaidu/DFS/setup.json")
@@ -38,3 +40,26 @@ namenodeHBthread.start()
 
 for i in range(1, num_datanodes + 1):
     dsthreads['datanodehbthread{}'.format(i)].start()
+
+functionality = '''put, syntax - put <absolute path of the file>
+cat, syntax - cat <filename>
+ls, syntax - ls
+rm,
+mkdir,
+rmdir,'''
+
+while True:
+    print()
+    print("Enter the DFS command...")
+    print(functionality)
+    print()
+    command  = input().split()
+    if command[0] == "put":
+        try:
+            # print('Command', command[0])
+            # print('File', command[1])
+            message = split(command[1])
+            print(message)
+            print()
+        except error as e:
+            print(e)
