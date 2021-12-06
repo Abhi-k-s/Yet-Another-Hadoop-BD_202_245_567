@@ -137,10 +137,10 @@ for i in range(1, num_datanodes + 1):
     filehandle = open(filename,"w")
     filehandle.write(datanodestring.format(i, i, sync_period/3))
     filehandle.close()
-    # for j in range(1, datanode_size + 1):
-    #     filename = 'DATANODE/datanode{}/block{}.txt'.format(i, j)
-    #     filename = dirname + 'block{}.txt'.format(j)
-    #     open(filename, 'w').close()
+    for j in range(1, datanode_size + 1):
+        filename = 'DATANODE/datanode{}/block{}.txt'.format(i, j)
+        filename = dirname + 'block{}.txt'.format(j)
+        open(filename, 'w').close()
 
 metaDataOfDatanodes={}  #keeps of track of datanodes and availability basically needed for writing file to hdfs
 metaDataOfInputFiles={}  #keeps track of files uploaded needed for reading from hdfs for cat command

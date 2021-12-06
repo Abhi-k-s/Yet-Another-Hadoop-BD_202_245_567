@@ -1,12 +1,6 @@
 import shutil #to move splits to datanodes
 import json
-
-BLOCK_SIZE = 64
-REPLICATION_FACTOR = 3
-NUM_DATANODES = 2
-DATANODE_SIZE = 10
-SYNC_PERIOD = 180
-HEARBEAT_TIMEPERIOD = 5.0
+import os
 
 f = open("config_sample.json")
 config = json.load(f)
@@ -22,7 +16,6 @@ namenode_log_path = config['namenode_log_path']
 namenode_checkpoints = config['namenode_checkpoints']
 fs_path = config['fs_path']
 dfs_setup_config = config['dfs_setup_config']
-
 setupfiledir = config['dfs_setup_config'][:-10]
 
 
@@ -59,7 +52,8 @@ def fileUpload(input):
 			
 			print(source, destination)
 			shutil.move(source, destination)
-			
+			os.remove(destination + '/block{}.txt'.format(freeBlockNumber))
+
 			#metadata of files updation
 			splitName=input[splitNumberCount+1].split('/')[-1].split('.')[0]
 			splitInfo=list()
@@ -67,7 +61,6 @@ def fileUpload(input):
 			splitInfo.append(splitName)   
 			splitInfo.append('datanode{}'.format(i))  #datanode number where the split is stored      
 			splitInfo.append(freeBlockNumber)
-
 			metaDataOfInputFiles[input[0]].append(splitInfo)
 
 			
@@ -76,7 +69,7 @@ def fileUpload(input):
 			message = "Write file into HDFS successful"
 			break
 		splitNumberCount+=1
-		
+
 	f1 = open('/Users/vinaynaidu/NAMENODE/metaDataOfDatanodes.json', 'w')
 	f2 = open('/Users/vinaynaidu/NAMENODE/metaDataOfInputFiles.json', 'w')
 	f1.write(str(json.dumps(metaDataOfDatanodes, indent=4)))
