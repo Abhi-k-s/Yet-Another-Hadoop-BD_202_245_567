@@ -75,8 +75,6 @@ dfs_setup_config = config['dfs_setup_config']
 namenodelogs = open(namenode_log_path, 'a')
 datanodelogs = open(datanode_log_path, 'a')
 
-HEARBEAT_TIMEPERIOD = 5.0
-
 masterset = set(range(1, num_datanodes + 1))
 
 def namenodereceiveheartbeat1():
@@ -85,9 +83,14 @@ def namenodereceiveheartbeat1():
 	localIP = "127.0.0.1"
 	localPort = 2000
 	bufferSize = 1024
-	
-	msgFromServer = "Hello UDP Client"
-	bytesToSend = str.encode(msgFromServer)
+
+	secserverAddressPort = ("127.0.0.1", 3000)
+	UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+	msgFromClient = "1"
+	bytesToSend = str.encode(msgFromClient)
+
+	# msgFromServer = "Hello UDP Client"
+	# bytesToSend = str.encode(msgFromServer)
 	UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 	UDPServerSocket.bind((localIP, localPort))
 	# print("NAMENODE server up and listening")
@@ -102,7 +105,7 @@ def namenodereceiveheartbeat1():
 			set1.add(int(message))
 		if len(set1) == num_datanodes:
 			# print("200, All datanodes functioning", datetime.datetime.fromtimestamp(time.time()))
-			# datanodelogs.write("200, All datanodes functioning at {}".format(datetime.datetime.fromtimestamp(time.time())))
+			UDPClientSocket.sendto(bytesToSend, secserverAddressPort)
 			datanodelogs.write("200, All datanodes functioning at - ")
 			datanodelogs.write(str(datetime.datetime.fromtimestamp(time.time())) + '\\n')
 			datanodelogs.flush()
@@ -116,9 +119,95 @@ def namenodereceiveheartbeat1():
 			datanodelogs.flush()
 			set1 = set()
 			#should write code to remove the datanode from the metadata file
-			#todo
-'''
+			#todo'''
 
+secondarynamenodestring = '''import socket
+import time
+import datetime
+import json
+import os
+
+f = open("/Users/vinaynaidu/DFS/setup.json")
+config = json.load(f)
+block_size = config['block_size']
+path_to_datanodes = config['path_to_datanodes']
+path_to_namenodes = config['path_to_namenodes']
+replication_factor = config['replication_factor']
+num_datanodes = config['num_datanodes']
+datanode_size = config['datanode_size']
+sync_period = config['sync_period']
+datanode_log_path = config['datanode_log_path']
+namenode_log_path = config['namenode_log_path']
+namenode_checkpoints = config['namenode_checkpoints']
+fs_path = config['fs_path']
+dfs_setup_config = config['dfs_setup_config']
+
+metaDataOfDatanodespath = path_to_namenodes + 'metaDataofDatanodes.json'
+metaDataOfInputFilespath = path_to_namenodes + 'metaDataofInputFiles.json'
+
+namenodelogs = open(namenode_log_path, 'a')
+datanodelogs = open(datanode_log_path, 'a')
+
+masterset = set(range(1, num_datanodes + 1))
+
+def secnamenodereceiveheartbeat():
+    prevstart = 0
+    count = 0
+    namenodelogs = open(namenode_log_path, 'a')
+    datanodelogs = open(datanode_log_path, 'a')
+    localIP = "127.0.0.1"
+    localPort = 3000
+    bufferSize = 1024
+
+    msgFromServer = "Hello UDP Client"
+    bytesToSend = str.encode(msgFromServer)
+    UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+    UDPServerSocket.bind((localIP, localPort))
+    # print("NAMENODE server up and listening")
+
+    while(True):
+        bytesAddressPair = UDPServerSocket.recvfrom(bufferSize)
+        message = int(bytesAddressPair[0].decode())
+        
+        if message == 1:
+            start = time.time()
+            #print("message coming", message)
+            if prevstart:
+                start = time.time()
+
+                if int(time.time()) - prevstart <= sync_period + 1 :
+                    namenodelogs.write("200, Primary Namenode functioning at - ")
+                    namenodelogs.write(str(datetime.datetime.fromtimestamp(time.time())) + '\\n')
+                    namenodelogs.flush()
+                    message = ""
+                    prevstart = start
+                    f1 = open(metaDataOfDatanodespath, 'r')
+                    f2 = open(metaDataOfInputFilespath, 'r')
+                    metaDataOfDatanodes = json.load(f1)
+                    metaDataOfInputFiles = json.load(f2)
+                    metaDataOfDatanodescheckpoints = namenode_checkpoints + 'metaDataofDatanodescheckpoints.json'
+                    metaDataOfInputFilescheckpoints = namenode_checkpoints + 'metaDataofInputFilescheckpoints.json'
+                    f3 = open(metaDataOfDatanodescheckpoints, 'w')
+                    f4 = open(metaDataOfInputFilescheckpoints, 'w')
+                    f3.write(str(json.dumps(metaDataOfDatanodes, indent=4)))
+                    f4.write(str(json.dumps(metaDataOfInputFiles, indent=4)))
+                    namenodelogs.write("Secondary Namenode performed backup at - ")
+                    namenodelogs.write(str(datetime.datetime.fromtimestamp(time.time())) + '\\n')
+                    namenodelogs.flush()
+                    f1.close()
+                    f2.close()
+                    f3.close()
+                    f4.close()
+
+                else:
+                    count = count + 1
+                    namenodelogs.write("404, Primary Namenode didn't send heartbeat - " + str(datetime.datetime.fromtimestamp(time.time())))
+                    namenodelogs.flush()
+                    if count > 5:
+                        #should take over primary namenode
+                        pass
+            else:
+                prevstart = start'''
 
 
 try:
@@ -128,6 +217,9 @@ except:
 filename = path_to_namenodes + 'namenode.py'
 handle = open(filename, 'w')
 handle.write(namenodestring)
+filename = path_to_namenodes + 'secondarynamenode.py'
+handle = open(filename, 'w')
+handle.write(secondarynamenodestring)
 
 for i in range(1, num_datanodes + 1):
     dirname = path_to_datanodes + 'datanode{}/'.format(i)
@@ -153,3 +245,13 @@ handle1 = open(metaDataOfDatanodespath, 'w')
 handle1.write(str(json.dumps(metaDataOfDatanodes, indent=4)))
 handle2 = open(metaDataOfInputFilespath, 'w')
 handle2.write(str(json.dumps(metaDataOfInputFiles, indent=4)))
+
+try:
+    os.mkdir(namenode_checkpoints)
+except:
+    pass
+
+metaDataOfDatanodescheckpoints = namenode_checkpoints + 'metaDataofDatanodescheckpoints.json'
+metaDataOfInputFilescheckpoints = namenode_checkpoints + 'metaDataofInputFilescheckpoints.json'
+open(metaDataOfDatanodescheckpoints, 'w').close()
+open(metaDataOfInputFilescheckpoints, 'w').close()
