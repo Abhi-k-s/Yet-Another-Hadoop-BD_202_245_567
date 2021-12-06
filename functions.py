@@ -69,8 +69,8 @@ def fileUpload(input):
 			break
 		splitNumberCount+=1
 
-	f1 = open('/Users/vinaynaidu/NAMENODE/metaDataOfDatanodes.json', 'w')
-	f2 = open('/Users/vinaynaidu/NAMENODE/metaDataOfInputFiles.json', 'w')
+	f1 = open(metaDataOfDatanodespath, 'w')
+	f2 = open(metaDataOfInputFilespath, 'w')
 	f1.write(str(json.dumps(metaDataOfDatanodes, indent=4)))
 	f2.write(str(json.dumps(metaDataOfInputFiles, indent=4)))
 	f1.close()
