@@ -3,7 +3,22 @@ import json
 import os
 import glob
 
-f = open("config_sample.json")
+#default configuration
+# block_size = 64
+# path_to_datanodes = "/users/vinaynaidu/DATANODE/"
+# path_to_namenodes = "/users/vinaynaidu/NAMENODE/"
+# replication_factor = 3
+# num_datanodes = 5
+# datanode_size = 10
+# sync_period = 60
+# datanode_log_path = "/users/vinaynaidu/DATANODE/DATANODE_LOGS.txt"
+# namenode_log_path = "/users/vinaynaidu/NAMENODE/NAMENODE_LOGS.txt"
+# namenode_checkpoints = "/users/vinaynaidu/NAMENODE/CHECKPOINTS/"
+# fs_path = "/users/vinaynaidu/DFS/FILE_SYSTEM/"
+dfs_setup_config = "/users/vinaynaidu/DFS/setup.json"
+setupfiledir = "/users/vinaynaidu/DFS/"
+
+f = open(dfs_setup_config)
 config = json.load(f)
 block_size = config['block_size']
 path_to_datanodes = config['path_to_datanodes']

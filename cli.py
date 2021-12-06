@@ -7,8 +7,13 @@ import sys
 from functions import split
 from functions import cat
 
+
+
 #change path to this file accordingly
-f = open("/Users/vinaynaidu/DFS/setup.json")
+dfs_setup_config = "/users/vinaynaidu/DFS/setup.json"
+setupfiledir = "/users/vinaynaidu/DFS/"
+
+f = open(dfs_setup_config)
 config = json.load(f)
 block_size = config['block_size']
 path_to_datanodes = config['path_to_datanodes']
@@ -22,6 +27,7 @@ namenode_log_path = config['namenode_log_path']
 namenode_checkpoints = config['namenode_checkpoints']
 fs_path = config['fs_path']
 dfs_setup_config = config['dfs_setup_config']
+setupfiledir = config['dfs_setup_config'][:-10]
 
 
 sys.path.append(path_to_datanodes)

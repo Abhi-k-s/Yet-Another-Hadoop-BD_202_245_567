@@ -2,22 +2,55 @@ import json
 import os
 from shutil import rmtree
 
-f = open("config_sample.json")
-config = json.load(f)
-block_size = config['block_size']
-path_to_datanodes = config['path_to_datanodes']
-path_to_namenodes = config['path_to_namenodes']
-replication_factor = config['replication_factor']
-num_datanodes = config['num_datanodes']
-datanode_size = config['datanode_size']
-sync_period = config['sync_period']
-datanode_log_path = config['datanode_log_path']
-namenode_log_path = config['namenode_log_path']
-namenode_checkpoints = config['namenode_checkpoints']
-fs_path = config['fs_path']
-dfs_setup_config = config['dfs_setup_config']
 
-setupfiledir = config['dfs_setup_config'][:-10]
+#default configuration
+config = {}
+config['block_size'] = 64
+config['path_to_datanodes'] = "/users/vinaynaidu/DATANODE/"
+config['path_to_namenodes'] = "/users/vinaynaidu/NAMENODE/"
+config['replication_factor'] = 3
+config['num_datanodes'] = 5
+config['datanode_size'] = 10
+config['sync_period'] = 60
+config['datanode_log_path'] = "/users/vinaynaidu/DATANODE/DATANODE_LOGS.txt"
+config['namenode_log_path'] = "/users/vinaynaidu/NAMENODE/NAMENODE_LOGS.txt"
+config['namenode_checkpoints'] = "/users/vinaynaidu/NAMENODE/CHECKPOINTS/"
+config['fs_path'] = "/users/vinaynaidu/DFS/FILE_SYSTEM/"
+config['dfs_setup_config'] = "/users/vinaynaidu/DFS/setup.json"
+setupfiledir = "/users/vinaynaidu/DFS/"
+
+try:
+    f = open("config_sample.json")
+    config = json.load(f)
+    block_size = config['block_size']
+    path_to_datanodes = config['path_to_datanodes']
+    path_to_namenodes = config['path_to_namenodes']
+    replication_factor = config['replication_factor']
+    num_datanodes = config['num_datanodes']
+    datanode_size = config['datanode_size']
+    sync_period = config['sync_period']
+    datanode_log_path = config['datanode_log_path']
+    namenode_log_path = config['namenode_log_path']
+    namenode_checkpoints = config['namenode_checkpoints']
+    fs_path = config['fs_path']
+    dfs_setup_config = config['dfs_setup_config']
+    setupfiledir = config['dfs_setup_config'][:-10]
+except:
+    block_size = config['block_size']
+    path_to_datanodes = config['path_to_datanodes']
+    path_to_namenodes = config['path_to_namenodes']
+    replication_factor = config['replication_factor']
+    num_datanodes = config['num_datanodes']
+    datanode_size = config['datanode_size']
+    sync_period = config['sync_period']
+    datanode_log_path = config['datanode_log_path']
+    namenode_log_path = config['namenode_log_path']
+    namenode_checkpoints = config['namenode_checkpoints']
+    fs_path = config['fs_path']
+    dfs_setup_config = config['dfs_setup_config']
+    setupfiledir = config['dfs_setup_config'][:-10]
+
+
 try:
     os.mkdir(setupfiledir)
 except:
