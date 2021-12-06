@@ -5,6 +5,7 @@ from multiprocessing import Process
 import json
 import sys
 from functions import split
+from functions import cat
 
 #change path to this file accordingly
 f = open("/Users/vinaynaidu/DFS/setup.json")
@@ -64,5 +65,10 @@ while True:
             message = split(command[1])
             print(message)
             print()
+        except error as e:
+            print(e)
+    if command[0] == "cat":
+        try:
+            cat(command[1])
         except error as e:
             print(e)

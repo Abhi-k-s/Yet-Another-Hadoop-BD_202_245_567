@@ -115,3 +115,28 @@ def split(filePath):
     return message
     # t1=threading.Thread(target=nn.fileUpload,args=(input,))
     # t1.start()
+
+def cat(fileName):
+	metaDataOfDatanodespath = path_to_namenodes + 'metaDataofDatanodes.json'
+	metaDataOfInputFilespath = path_to_namenodes + 'metaDataofInputFiles.json'
+	#print(fileName)
+	f = open(metaDataOfInputFilespath)
+	data=json.load(f)
+	#print(data)
+	#fileSplits=["./datanode1/hello.txt","./datanode2/hello2.txt"] #split's paths orderwise  this is how fileSplits looks like
+
+	fileSplits=[]
+	try:
+		for i in range(1, data[fileName][0]+1):
+			fileSplits.append(path_to_datanodes+data[fileName][i][2]+'/'+data[fileName][i][1]+'.'+fileName.split('.')[1]) #relativepaths of splits
+	except:
+		print("File not found in the DFS")
+
+	for splits in fileSplits:
+		file1 = open(splits,'r')
+
+		lines = file1.readlines()
+		for line in lines:
+			print(line.strip())
+
+		file1.close()

@@ -5,7 +5,7 @@
     "replication_factor": 3,
     "num_datanodes": 5,
     "datanode_size": 10,
-    "sync_period": 60,
+    "sync_period": 30,
     "datanode_log_path": "/users/vinaynaidu/DATANODE/DATANODE_LOGS.txt",
     "namenode_log_path": "/users/vinaynaidu/NAMENODE/NAMENODE_LOGS.txt",
     "namenode_checkpoints": "/users/vinaynaidu/NAMENODE/CHECKPOINTS/",
