@@ -7,6 +7,7 @@ import sys
 from functions import split
 from functions import cat
 from functions import remove
+from functions import listallfiles
 from mapreduce import mapreduce
 
 
@@ -55,10 +56,13 @@ for i in range(1, num_datanodes + 1):
 functionality = '''put, syntax - put <absolute path of the file>
 cat, syntax - cat <filename>
 ls, syntax - ls
-rm,
+rm, syntax - rm <filename>
 mkdir,
 rmdir,
 runmapreducejob -i <absolute path of input file> -o <absolute path of output> -c <dfs setup file> -m <mapper absolute path> -r <reducer absolute path>'''
+
+print("The default HDFS or the previous session is loaded...")
+print("Provide configuration file and run createhdfs.py if you wish to create a new DFS.")
 
 while True:
     print()
@@ -102,4 +106,9 @@ while True:
             mapreduce(inputfilepath, outputfilepath, setupfilepath, mapperpath, reducerpath)
         else:
             print("Invalid syntax for running Map Reduce job")
+    if command[0] == "ls":
+        print()
+        print("Files present in the DFS -")
+        listallfiles()
+    
 

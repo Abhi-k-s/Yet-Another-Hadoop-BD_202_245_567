@@ -90,7 +90,7 @@ import datetime
 import json
 import os
 
-f = open("/Users/vinaynaidu/DFS/setup.json")
+f = open('{}')
 config = json.load(f)
 block_size = config['block_size']
 path_to_datanodes = config['path_to_datanodes']
@@ -152,7 +152,7 @@ def namenodereceiveheartbeat1():
 			datanodelogs.flush()
 			set1 = set()
 			#should write code to remove the datanode from the metadata file
-			#todo'''
+			#todo'''.format(dfs_setup_config)
 
 secondarynamenodestring = '''import socket
 import time
@@ -162,7 +162,7 @@ import os
 import threading
 from namenode import namenodereceiveheartbeat1
 
-f = open("/Users/vinaynaidu/DFS/setup.json")
+f = open('{}')
 config = json.load(f)
 block_size = config['block_size']
 path_to_datanodes = config['path_to_datanodes']
@@ -245,7 +245,7 @@ def secnamenodereceiveheartbeat():
                         namenodeHBthread.start()
                         pass
             else:
-                prevstart = start'''
+                prevstart = start'''.format(dfs_setup_config)
 
 
 try:
@@ -267,22 +267,29 @@ for i in range(1, num_datanodes + 1):
     filehandle = open(filename,"w")
     filehandle.write(datanodestring.format(i, i, sync_period/3))
     filehandle.close()
-    for j in range(1, datanode_size + 1):
-        filename = 'DATANODE/datanode{}/block{}.txt'.format(i, j)
-        filename = dirname + 'block{}.txt'.format(j)
-        open(filename, 'w').close()
+    # for j in range(1, datanode_size + 1):
+    #     filename = 'DATANODE/datanode{}/block{}.txt'.format(i, j)
+    #     filename = dirname + 'block{}.txt'.format(j)
+    #     open(filename, 'w').close()
 
-metaDataOfDatanodes={}  #keeps of track of datanodes and availability basically needed for writing file to hdfs
-metaDataOfInputFiles={}  #keeps track of files uploaded needed for reading from hdfs for cat command
+metaDataOfDatanodes = {}  #keeps of track of datanodes and availability basically needed for writing file to hdfs
+metaDataOfInputFiles = {}  #keeps track of files uploaded needed for reading from hdfs for cat command
+metaDataOfReplicas = {}
 for i in range(1, num_datanodes+1):
 	metaDataOfDatanodes["datanode{}".format(i)] = {"freeBlocks":list(range(1, datanode_size + 1)),"occupiedBlocks":{}}
 
 metaDataOfDatanodespath = path_to_namenodes + 'metaDataofDatanodes.json'
 metaDataOfInputFilespath = path_to_namenodes + 'metaDataofInputFiles.json'
+metaDataOfReplicaspath = path_to_namenodes + 'metaDataofReplicas.json'
 handle1 = open(metaDataOfDatanodespath, 'w')
 handle1.write(str(json.dumps(metaDataOfDatanodes, indent=4)))
 handle2 = open(metaDataOfInputFilespath, 'w')
 handle2.write(str(json.dumps(metaDataOfInputFiles, indent=4)))
+handle3 = open(metaDataOfReplicaspath, 'w')
+handle3.write(str(json.dumps(metaDataOfReplicas, indent=4)))
+handle1.close()
+handle2.close()
+handle3.close()
 
 try:
     os.mkdir(namenode_checkpoints)
@@ -291,5 +298,7 @@ except:
 
 metaDataOfDatanodescheckpoints = namenode_checkpoints + 'metaDataofDatanodescheckpoints.json'
 metaDataOfInputFilescheckpoints = namenode_checkpoints + 'metaDataofInputFilescheckpoints.json'
+metaDataOfReplicascheckpoints = namenode_checkpoints + 'metaDataOfReplicascheckpoints.json'
 open(metaDataOfDatanodescheckpoints, 'w').close()
 open(metaDataOfInputFilescheckpoints, 'w').close()
+open(metaDataOfReplicascheckpoints, 'w').close()
